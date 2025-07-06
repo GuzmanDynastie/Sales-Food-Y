@@ -1,51 +1,49 @@
-import { turso } from "./connection.js";
+import { master } from "./connection.js";
 
 export async function initDB() {
   // Crea la tabla de tipos de productos (salsa, frijoles, etc.)
-  await turso.execute(`
+  await master.query(`
         CREATE TABLE IF NOT EXISTS types (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             name TEXT UNIQUE NOT NULL,
             status TEXT DEFAULT 'active'
         );
     `);
 
   // Crea la tabla para las presentaciones de los productos (cuarto, litro, etc.)
-  await turso.execute(`
+  await master.query(`
         CREATE TABLE IF NOT EXISTS presentations (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             descrption TEXT UNIQUE NOT NULL,
             status TEXT DEFAULT 'active'
         );
     `);
 
   // Crea la tabla para los origenes de las ventas de productos (venta directa, carniceria, etc.)
-  await turso.execute(`
+  await master.query(`
         CREATE TABLE IF NOT EXISTS origins (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             name TEXT UNIQUE NOT NULL,
             status TEXT DEFAULT 'active'
         );
     `);
 
   // Crea la tabla de productos en venta (Salsa Roja, Frijoles Fritos, etc.)
-  await turso.execute(`
+  await master.query(`
         CREATE TABLE IF NOT EXISTS products (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             name TEXT NOT NULL,
-            type_id INTEGER NOT NULL,
-            presentation_id INTEGER NOT NULL,
-            price REAL NOT NULL,
-            status TEXT DEFAULT 'active',
-            FOREIGN KEY(type_id) REFERENCES types(id),
-            FOREIGN KEY(presentation_id) REFERENCES presentations(id)
+            type_id INTEGER NOT NULL REFERENCES types(id),
+            presentation_id INTEGER NOT NULL REFERENCES presentations(id),
+            price NUMERIC(10, 2) NOT NULL,
+            status TEXT DEFAULT 'active'
         );
     `);
 
   // Crea la tabla de usuarios
-  await turso.execute(`
+  await master.query(`
         CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             name TEXT NOT NULL,
             last_name TEXT NOT NULL,
             phone TEXT UNIQUE NOT NULL,
@@ -56,24 +54,24 @@ export async function initDB() {
     `);
 
   // Crea la tabla de ventas registradas
-  await turso.execute(`
+  await master.query(`
         CREATE TABLE IF NOT EXISTS sales (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            product_id INTEGER NOT NULL,
-            user_id INTEGER NOT NULL,
-            origin_id INTEGER NOT NULL,
-            date TEXT NOT NULL,
+            id SERIAL PRIMARY KEY,
+            product_id INTEGER NOT NULL REFERENCES products(id), 
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            origin_id INTEGER NOT NULL REFERENCES origins(id),
+            date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             quantity INTEGER NOT NULL,
-            FOREIGN KEY(product_id) REFERENCES products(id),
-            FOREIGN KEY(user_id) REFERENCES users(id),
-            FOREIGN KEY(origin_id) REFERENCES origins(id)
+            status TEXT DEFAULT 'active',
+            cancelled_at TIMESTAMP NULL,
+            reason TEXT NULL
         );
     `);
 
   // Crea la tabla de insumos e ingredientes (chiles, frijoles, moldes, tapas)
-  await turso.execute(`
+  await master.query(`
         CREATE TABLE IF NOT EXISTS supplies (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             name TEXT UNIQUE NOT NULL,
             unit TEXT NOT NULL,
             status TEXT DEFAULT 'active'
@@ -81,40 +79,36 @@ export async function initDB() {
     `);
 
   // Crea la tabla de entrada de insumos (cuando se compran insumos o ingredientes)
-  await turso.execute(`
+  await master.query(`
         CREATE TABLE IF NOT EXISTS supply_entries (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            supply_id INTEGER NOT NULL,
-            quantity REAL NOT NULL,
-            total_price REAL NOT NULL,
-            unit_cost REAL NOT NULL,
-            date TEXT NOT NULL,
-            FOREIGN KEY(supply_id) REFERENCES supplies(id)
+            id SERIAL PRIMARY KEY,
+            supply_id INTEGER NOT NULL REFERENCES supplies(id),
+            quantity NUMERIC(10, 2) NOT NULL,
+            total_price NUMERIC(10, 2) NOT NULL,
+            unit_cost NUMERIC(10, 2) NOT NULL,
+            date TIMESTAMP NOT NULL
         );
     `);
 
   // Crea la tabla consumo de insumos (por venta o manualmente)
-  await turso.execute(`
+  await master.query(`
         CREATE TABLE IF NOT EXISTS supply_consumptions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            supply_id INTEGER NOT NULL,
-            quantity REAL NOT NULL,
-            date TEXT NOT NULL,
-            reason TEXT,
-            FOREIGN KEY(supply_id) REFERENCES supplies(id)
+            id SERIAL PRIMARY KEY,
+            supply_id INTEGER NOT NULL REFERENCES supplies(id),
+            quantity NUMERIC(10, 2) NOT NULL,
+            date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            reason TEXT
         );
     `);
 
   // Crea la tabla Recetas (relacion producto-insumo)
-  await turso.execute(`
+  await master.query(`
         CREATE TABLE IF NOT EXISTS recipes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            product_id INTEGER NOT NULL,
-            supply_id INTEGER NOT NULL,
-            quantity_per_unit REAL NOT NULL,
-            status TEXT DEFAULT 'active',
-            FOREIGN KEY(product_id) REFERENCES products(id),
-            FOREIGN KEY(supply_id) REFERENCES supplies(id)
+            id SERIAL PRIMARY KEY,
+            product_id INTEGER NOT NULL REFERENCES products(id),
+            supply_id INTEGER NOT NULL REFERENCES supplies(id),
+            quantity_per_unit NUMERIC(10, 2) NOT NULL,
+            status TEXT DEFAULT 'active'
         );
     `);
 }

@@ -11,12 +11,10 @@ export class ProductController {
   static async getAllProducts(req, res) {
     try {
       const statusParam = req.query.status;
-      let status;
-
-      if (statusParam === "active") status = true;
-      else if (statusParam === "inactive") status = false;
-      else status = undefined;
-      
+      const validStatuses = ["active", "inactive"];
+      const status = validStatuses.includes(statusParam)
+        ? statusParam
+        : undefined;
       const products = await ProductModel.getProducts(status);
       res.status(200).json(products);
     } catch (error) {
@@ -35,7 +33,7 @@ export class ProductController {
       const id = req.params.id;
       const product = await ProductModel.getProductById(id);
       if (!product) {
-        return res.status(404).json({ error: "Product doesn't exist" });
+        return res.status(404).json({ error: "Product not found" });
       }
 
       res.status(200).json(product);
@@ -57,13 +55,15 @@ export class ProductController {
         return res.status(400).json({ error: "Missing required fields" });
       }
 
-      await ProductModel.createProduct({
+      const newProduct = await ProductModel.createProduct({
         name,
         type_id,
         presentation_id,
         price,
       });
-      res.status(200).json({ message: "Product created successfully" });
+      res
+        .status(200)
+        .json({ message: "Product created successfully", product: newProduct });
     } catch (error) {
       res.status(500).json({ error: "Failed to create new product" });
     }
@@ -83,14 +83,24 @@ export class ProductController {
         return res.status(400).json({ error: "Missing required fields" });
       }
 
-      await ProductModel.updateProduct(id, {
+      const updatedProduct = await ProductModel.updateProduct(id, {
         name,
         type_id,
         presentation_id,
         price,
         status,
       });
-      res.status(200).json({ message: "Product updated successfully" });
+      if (!updatedProduct) {
+        return res
+          .status(404)
+          .json({ error: "Product not found or already inactive" });
+      }
+      res
+        .status(200)
+        .json({
+          message: "Product updated successfully",
+          product: updatedProduct,
+        });
     } catch (error) {
       res.status(500).json({ error: "Failed to update the product" });
     }
@@ -106,8 +116,18 @@ export class ProductController {
     try {
       const id = req.params.id;
 
-      await ProductModel.softDeleteProduct(id);
-      res.status(200).json({ message: "Product soft deleted successfully" });
+      const softProduct = await ProductModel.softDeleteProduct(id);
+      if (!softProduct) {
+        return res
+          .status(404)
+          .json({ error: "Product not found or already inactive" });
+      }
+      res
+        .status(200)
+        .json({
+          message: "Product soft deleted successfully",
+          product: softProduct,
+        });
     } catch (error) {
       res.status(500).json({ error: "Failed to delete the product" });
     }

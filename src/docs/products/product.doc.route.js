@@ -170,7 +170,7 @@ export const productDocs = {
               schema: {
                 type: "object",
                 properties: {
-                  error: { type: "string", example: "Product doesn't exist" },
+                  error: { type: "string", example: "Product not found" },
                 },
               },
             },
@@ -319,7 +319,7 @@ export const productDocs = {
               schema: {
                 type: "object",
                 properties: {
-                  error: { type: "string", example: "Product doesn't exist" },
+                  error: { type: "string", example: "Product not found" },
                 },
               },
             },

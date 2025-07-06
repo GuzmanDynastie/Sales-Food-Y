@@ -1,11 +1,12 @@
 import { productDocs } from "../products/product.doc.route.js";
 import { userDocs } from "../users/user.doc.route.js";
+import { saleDocs } from "../sales/sale.doc.route.js";
 
 export const swaggerDefinition = {
   openapi: "3.1.1",
   info: {
     title: "Sistema de Gestion de Productos y Usuarios - API REST",
-    version: "1.0.0",
+    version: "1.0.1",
     description:
       "Esta documentacion detalla los endpoints disponibles para gestionar productos, usuarios y sus operaciones relacionadas. Incluye operaciones CRUD, filtros y validaciones.",
       contact: {
@@ -23,5 +24,6 @@ export const swaggerDefinition = {
   paths: {
     ...productDocs,
     ...userDocs,
+    ...saleDocs,
   },
 };

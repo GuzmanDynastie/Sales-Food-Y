@@ -1,11 +1,11 @@
-import { turso } from "../db/connection.js";
+import { master } from "../db/connection.js";
 
 export class ProductModel {
   /**
    * Obtiene productos segun filtro de estado.
-   * - `true` para activos,
-   * - `false` para inactivos,
-   * - `undefined` o sin paramentros para todos.
+   * - `active` para productos activos,
+   * - `inactive` para productos inactivos,
+   * - `undefined` o sin paramentros para todos los productos.
    *
    * @param {boolean} [statusFilter] - Filtro opcional de estados.
    * @returns {Promise<Array>} Lista de productos.
@@ -14,13 +14,13 @@ export class ProductModel {
     let query = `SELECT * FROM products`;
     const params = [];
 
-    if (statusFilter === true) {
-      query += ` WHERE status = 'active'`;
-    } else if (statusFilter === false) {
-      query += ` WHERE status = 'inactive'`;
+    const validStatuses = ['active', 'inactive'];
+    if (validStatuses.includes(statusFilter)) {
+      query += ` WHERE status = $1`;
+      params.push(statusFilter);
     }
 
-    const result = await turso.execute(query, params);
+    const result = await master.query(query, params);
     return result.rows;
   }
 
@@ -30,8 +30,8 @@ export class ProductModel {
    * @returns {Promise<Object|undefined>} - Promesa con el producto o `undefined` si no existe.
    */
   static async getProductById(id) {
-    const result = await turso.execute(
-      `SELECT * FROM products WHERE id = ? AND status = 'active'`,
+    const result = await master.query(
+      `SELECT * FROM products WHERE id = $1 AND status = 'active'`,
       [id]
     );
     return result.rows[0];
@@ -48,10 +48,11 @@ export class ProductModel {
    */
   static async createProduct(product) {
     const { name, type_id, presentation_id, price } = product;
-    await turso.execute(
-      `INSERT INTO products (name, type_id, presentation_id, price) VALUES (?, ?, ?, ?)`,
+    const result = await master.query(
+      `INSERT INTO products (name, type_id, presentation_id, price) VALUES ($1, $2, $3, $4) RETURNING *`,
       [name, type_id, presentation_id, price]
     );
+    return result.rows[0];
   }
 
   /**
@@ -67,10 +68,12 @@ export class ProductModel {
    */
   static async updateProduct(id, product) {
     const { name, type_id, presentation_id, price, status } = product;
-    await turso.execute(
-      `UPDATE products SET name = ?, type_id = ?, presentation_id = ?, price = ?, status = ? WHERE id = ?`,
+    const result = await master.query(
+      `UPDATE products SET name = $1, type_id = $2, presentation_id = $3, price = $4, status = $5 WHERE id = $6 RETURNING *`,
       [name, type_id, presentation_id, price, status, id]
     );
+    if (result.rowCount === 0) return null;
+    return result.rows[0];
   }
 
   /**
@@ -79,9 +82,11 @@ export class ProductModel {
    * @returns {Promise<void>} - Promesa que resuelve cuando el producto se marca como inactivo.
    */
   static async softDeleteProduct(id) {
-    await turso.execute(
-      `UPDATE products SET status = 'inactive' WHERE id = ?`,
+    await master.query(
+      `UPDATE products SET status = 'inactive' WHERE id = $1 RETURNING *`,
       [id]
     );
+    if (result.rowCount === 0) return null;
+    return result.rows[0];
   }
 }

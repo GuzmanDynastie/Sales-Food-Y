@@ -12,12 +12,10 @@ export class UserController {
   static async getAllUsers(req, res) {
     try {
       const statusParam = req.query.status;
-      let status;
-
-      if (statusParam === "active") status = true;
-      else if (statusParam === "inactive") status = false;
-      else status = undefined;
-
+      const validStatuses = ["active", "inactive"];
+      const status = validStatuses.includes(statusParam)
+        ? statusParam
+        : undefined;
       const users = await UserModel.getUsers(status);
       res.status(200).json(users);
     } catch (error) {
@@ -36,7 +34,7 @@ export class UserController {
       const id = req.params.id;
       const user = await UserModel.getUserById(id);
       if (!user) {
-        return res.status(404).json({ error: "User doesn't exist" });
+        return res.status(404).json({ error: "User not found" });
       }
 
       res.status(200).json(user);
@@ -61,7 +59,7 @@ export class UserController {
 
       const hashedPassword = await hashPassword(password);
 
-      await UserModel.createUser({
+      const newUser = await UserModel.createUser({
         name,
         last_name,
         phone,
@@ -69,7 +67,9 @@ export class UserController {
         password: hashedPassword,
       });
 
-      res.status(200).json({ message: "User created successfully" });
+      res
+        .status(200)
+        .json({ message: "User created successfully", user: newUser });
     } catch (error) {
       if (error.message.includes("UNIQUE constraint failed: users.email")) {
         return res.status(409).json({ error: "Email is already registered" });
@@ -93,7 +93,7 @@ export class UserController {
         return res.status(400).json({ message: "Missing required fields" });
       }
 
-      await UserModel.updateUser(id, {
+      const updatedUser = await UserModel.updateUser(id, {
         name,
         last_name,
         phone,
@@ -101,7 +101,9 @@ export class UserController {
         password,
         status,
       });
-      res.status(200).json({ message: "User updated successfully" });
+      res
+        .status(200)
+        .json({ message: "User updated successfully", user: updatedUser });
     } catch (error) {
       res.status(500).json({ error: "Failed to update the user" });
     }
@@ -116,9 +118,15 @@ export class UserController {
   static async deleteUser(req, res) {
     try {
       const id = req.params.id;
-
-      await UserModel.softDeleteUser(id);
-      res.status(200).json({ message: "User soft delete successfully" });
+      const deletedUser = await UserModel.softDeleteUser(id);
+      if (!deletedUser) {
+        return res
+          .status(404)
+          .json({ error: "User not found or already inactive" });
+      }
+      res
+        .status(200)
+        .json({ message: "User soft delete successfully", user: deletedUser });
     } catch (error) {
       res.status(500).json({ error: "Failed to delete the product" });
     }
@@ -152,7 +160,6 @@ export class UserController {
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
-
       const isMatch = await comparePassword(password, user.password);
       if (!isMatch) {
         return res.status(401).json({ error: "Invalid credentials" });

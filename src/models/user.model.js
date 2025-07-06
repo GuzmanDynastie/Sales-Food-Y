@@ -1,12 +1,12 @@
-import { turso } from "../db/connection.js";
+import { master } from "../db/connection.js";
 import { hashPassword, comparePassword } from "../utils/password.js";
 
 export class UserModel {
   /**
    * Obtiene usuarios segun filtro de estado.
-   * - `true` para activos,
-   * - `false` para inactivos,
-   * - `undefined` o sin paramentros para todos.
+   * - `active` para usuarios activos,
+   * - `inactive` para usuarios inactivos,
+   * - `undefined` o sin paramentros para todos los usuarios.
    *
    * @param {boolean} [statusFilter] - Filtro opcional de estados.
    * @returns {Promise<Array>} Lista de usuarios.
@@ -15,13 +15,13 @@ export class UserModel {
     let query = `SELECT * FROM users`;
     const params = [];
 
-    if (statusFilter === true) {
-      query += ` WHERE status = true`;
-    } else if (statusFilter === false) {
-      query += ` WHERE status = false`;
+    const validStatuses = ["active", "inactive"];
+    if (validStatuses.includes(statusFilter)) {
+      query += ` WHERE status = $1`;
+      params.push(statusFilter);
     }
 
-    const result = await turso.execute(query, params);
+    const result = await master.query(query, params);
     return result.rows;
   }
 
@@ -31,8 +31,8 @@ export class UserModel {
    * @returns {Promise<Object|undefined>} - Promesa con el usuario o `undefined` si no existe.
    */
   static async getUserById(id) {
-    const result = await turso.execute(
-      `SELECT * FROM users WHERE id = ? AND status = 'active'`,
+    const result = await master.query(
+      `SELECT * FROM users WHERE id = $1 AND status = 'active'`,
       [id]
     );
     return result.rows[0];
@@ -51,10 +51,11 @@ export class UserModel {
   static async createUser(user) {
     const { name, last_name, phone, email, password } = user;
     try {
-      await turso.execute(
-        `INSERT INTO users (name, last_name, phone, email, password) VALUES (?, ?, ?, ?, ?)`,
+      const result = await master.query(
+        `INSERT INTO users (name, last_name, phone, email, password) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
         [name, last_name, phone, email, password]
       );
+      return result.rows[0];
     } catch (error) {
       if (error.message.includes("UNIQUE contraist failed: users.email")) {
         throw new Error("Email already registered");
@@ -77,10 +78,13 @@ export class UserModel {
    */
   static async updateUser(id, user) {
     const { name, last_name, phone, email, password } = user;
-    await turso.execute(
-      `UPDATE users SET name = ?, last_name = ?, phone = ?, email = ?, password = ? WHERE id = ?`,
+    const result = await master.query(
+      `UPDATE users SET name = $1, last_name = $2, phone = $3, email = $4, password = $5 WHERE id = $6 RETURNING *`,
       [name, last_name, phone, email, password, id]
     );
+
+    if (!result.rowCount === 0) return null;
+    return result.rows[0];
   }
 
   /**
@@ -89,9 +93,13 @@ export class UserModel {
    * @returns {Promise<void>} - Promesa que resuelve cuando el usuario se marca como inactivo.
    */
   static async softDeleteUser(id) {
-    await turso.execute(`UPDATE users SET status = 'ianctive' WHERE id = ?`, [
-      id,
-    ]);
+    const result = await master.query(
+      `UPDATE users SET status = 'inactive' WHERE id = $1 RETURNING *`,
+      [id]
+    );
+
+    if (!result.rowCount === 0) return null;
+    return result.rows[0];
   }
 
   /**
@@ -100,7 +108,7 @@ export class UserModel {
    * @returns {Promise<Object|undefined>} - Promesa que resuelve con el objeto del usario o `undefined` si no existe.
    */
   static async getUserByEmail(email) {
-    const result = turso.execute(`SELECT * FROM users WHERE email = ?`, [
+    const result = master.query(`SELECT * FROM users WHERE email = $1`, [
       email,
     ]);
     return (await result).rows[0];

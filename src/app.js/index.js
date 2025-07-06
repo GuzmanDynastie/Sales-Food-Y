@@ -5,11 +5,12 @@ import { setupSwagger } from "../docs/swagger.doc.js";
 import { initDB } from "../db/init.js";
 import routeProduct from "../routes/product.route.js";
 import routeUser from "../routes/user.route.js";
+import routeSale from "../routes/sale.route.js";
 
 process.loadEnvFile();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 app.use(helmet());
 app.use(morgan("dev"));
@@ -18,6 +19,7 @@ app.use(express.json());
 setupSwagger(app);
 app.use(routeProduct);
 app.use(routeUser);
+app.use(routeSale);
 
 app.listen(PORT, () => {
   console.log(`Server starting in http://localhost:${PORT}`);

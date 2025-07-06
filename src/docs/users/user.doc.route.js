@@ -171,7 +171,7 @@ export const userDocs = {
               schema: {
                 type: "object",
                 properties: {
-                  error: { type: "string", example: "User doesn't exist" },
+                  error: { type: "string", example: "User not found" },
                 },
               },
             },
@@ -322,7 +322,6 @@ export const userDocs = {
               schema: {
                 type: "object",
                 properties: {
-                  error: { type: "string", example: "User doesn't exist" },
                 },
               },
             },
