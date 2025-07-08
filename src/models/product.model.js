@@ -7,7 +7,7 @@ export class ProductModel {
    * - `inactive` para productos inactivos,
    * - `undefined` o sin paramentros para todos los productos.
    *
-   * @param {boolean} [statusFilter] - Filtro opcional de estados.
+   * @param {string} [statusFilter] - Filtro opcional de estados.
    * @returns {Promise<Array>} Lista de productos.
    */
   static async getProducts(statusFilter) {
@@ -77,12 +77,12 @@ export class ProductModel {
   }
 
   /**
-   * Marca un producto como ianctivo (eliminacion logica) por su ID.
+   * Marca un producto como inactivo (eliminacion logica) por su ID.
    * @param {number} id - ID del producto a desactivar.
    * @returns {Promise<void>} - Promesa que resuelve cuando el producto se marca como inactivo.
    */
   static async softDeleteProduct(id) {
-    await master.query(
+    const result = await master.query(
       `UPDATE products SET status = 'inactive' WHERE id = $1 RETURNING *`,
       [id]
     );

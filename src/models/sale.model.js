@@ -7,7 +7,7 @@ export class SalesModel {
    * - `inactive` para ventas inactivas,
    * - `undefined` o sin paramentros para todas las ventas.
    *
-   * @param {boolean} [statusFilter] - Filtro opcional de estados.
+   * @param {string} [statusFilter] - Filtro opcional de estados.
    * @returns {Promise<Array>} Lista de ventas.
    */
   static async getSales(statusFilter) {
