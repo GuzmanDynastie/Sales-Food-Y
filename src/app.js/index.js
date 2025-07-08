@@ -6,6 +6,7 @@ import { initDB } from "../db/init.js";
 import routeProduct from "../routes/product.route.js";
 import routeUser from "../routes/user.route.js";
 import routeSale from "../routes/sale.route.js";
+import routeType from "../routes/type.route.js";
 
 process.loadEnvFile();
 
@@ -20,6 +21,7 @@ setupSwagger(app);
 app.use(routeProduct);
 app.use(routeUser);
 app.use(routeSale);
+app.use(routeType);
 
 app.listen(PORT, () => {
   console.log(`Server starting in http://localhost:${PORT}`);
