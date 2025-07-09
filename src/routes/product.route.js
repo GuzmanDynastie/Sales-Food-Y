@@ -4,38 +4,38 @@ import { ProductController } from "../controllers/product.controller.js";
 const router = express.Router();
 
 /**
- * @route GET /api/product
+ * @route GET /api/products
  * @desc Obtener todos los productos (filtrados por estado si se pasa el query param `status`)
  * @access Publico
  */
-router.get("/api/product", ProductController.getAllProducts);
+router.get("/api/products", ProductController.getAllProducts);
 
 /**
- * @route GET /api/product/:id
+ * @route GET /api/products/:id
  * @desc Obtener un producto por su ID (solo activos)
  * @access Publico
  */
-router.get("/api/product/:id", ProductController.getProductById);
+router.get("/api/products/:id", ProductController.getProductById);
 
 /**
- * @route POST /api/product
+ * @route POST /api/products
  * @desc Crear un nuevo producto
  * @access Publico
  */
-router.post("/api/product", ProductController.createProduct);
+router.post("/api/products", ProductController.createProduct);
 
 /**
- * @route PUT /api/product/:id
+ * @route PUT /api/products/:id
  * @desc Actualizar un producto por su ID
  * @access Publico
  */
-router.put("/api/product/:id", ProductController.updateProduct);
+router.put("/api/products/:id", ProductController.updateProduct);
 
 /**
- * @route DELETE /api/product/:id
+ * @route DELETE /api/products/:id
  * @desc Eliminar logicamente un producto por su ID (soft delete)
  * @access Publico
  */
-router.delete("/api/product/:id", ProductController.deleteProduct);
+router.delete("/api/products/:id", ProductController.deleteProduct);
 
 export default router;
