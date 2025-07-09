@@ -3,6 +3,7 @@ import { userDocs } from "../users/user.doc.route.js";
 import { saleDocs } from "../sales/sale.doc.route.js";
 import { typeDocs } from "../types/type.doc.route.js";
 import { presentationDocs } from "../presentations/presentation.doc.route.js";
+import { originDocs } from "../origins/origin.doc.route.js";
 
 export const swaggerDefinition = {
   openapi: "3.1.1",
@@ -29,5 +30,6 @@ export const swaggerDefinition = {
     ...saleDocs,
     ...typeDocs,
     ...presentationDocs,
+    ...originDocs,
   },
 };
