@@ -8,7 +8,7 @@ export class UserModel {
    * - `inactive` para usuarios inactivos,
    * - `undefined` o sin paramentros para todos los usuarios.
    *
-   * @param {string} [statusFilter] - Filtro opcional de estados.
+   * @param {string|undefined} [statusFilter] - Filtro opcional de estados.
    * @returns {Promise<Array>} Lista de usuarios.
    */
   static async getUsers(statusFilter) {

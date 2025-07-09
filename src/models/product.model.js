@@ -7,7 +7,7 @@ export class ProductModel {
    * - `inactive` para productos inactivos,
    * - `undefined` o sin paramentros para todos los productos.
    *
-   * @param {string} [statusFilter] - Filtro opcional de estados.
+   * @param {string|undefined} [statusFilter] - Filtro opcional de estados.
    * @returns {Promise<Array>} Lista de productos.
    */
   static async getProducts(statusFilter) {
