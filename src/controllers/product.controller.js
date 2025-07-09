@@ -79,7 +79,7 @@ export class ProductController {
     try {
       const id = req.params.id;
       const { name, type_id, presentation_id, price, status } = req.body;
-      if (!name || !type_id || !presentation_id || price == null || !status) {
+      if (!name || !type_id || !presentation_id || price == null || !["active", "inactive"].includes(status)) {
         return res.status(400).json({ error: "Missing required fields" });
       }
 

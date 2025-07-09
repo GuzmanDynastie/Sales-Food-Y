@@ -1,4 +1,4 @@
-import { TypesModel } from "../models/types.model.js";
+import { TypesModel } from "../models/type.model.js";
 
 export class TypesController {
   /**
@@ -73,7 +73,7 @@ export class TypesController {
     try {
       const id = req.params.id;
       const { name, status } = req.body;
-      if (!name || !status) {
+      if (!name || !["active", "inactive"].includes(status)) {
         return res.status(400).json({ error: "Missing required fields" });
       }
       const updatedType = await TypesModel(id, { name, status });

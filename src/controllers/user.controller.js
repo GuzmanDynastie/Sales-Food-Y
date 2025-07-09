@@ -89,7 +89,7 @@ export class UserController {
     try {
       const id = req.params.id;
       const { name, last_name, phone, email, password, status } = req.body;
-      if (!name || !last_name || !phone || !email || !password || !status) {
+      if (!name || !last_name || !phone || !email || !password || !["active", "inactive"].includes(status)) {
         return res.status(400).json({ message: "Missing required fields" });
       }
 
