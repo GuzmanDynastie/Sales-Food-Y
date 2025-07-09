@@ -3,10 +3,11 @@ import morgan from "morgan";
 import helmet from "helmet";
 import { setupSwagger } from "../docs/swagger.doc.js";
 import { initDB } from "../db/init.js";
-import routeProduct from "../routes/product.route.js";
-import routeUser from "../routes/user.route.js";
-import routeSale from "../routes/sale.route.js";
-import routeType from "../routes/type.route.js";
+import routeProducts from "../routes/product.route.js";
+import routeUsers from "../routes/user.route.js";
+import routeSales from "../routes/sale.route.js";
+import routeTypes from "../routes/type.route.js";
+import routePresentations from "../routes/presentation.route.js";
 
 process.loadEnvFile();
 
@@ -18,10 +19,11 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 setupSwagger(app);
-app.use(routeProduct);
-app.use(routeUser);
-app.use(routeSale);
-app.use(routeType);
+app.use(routeProducts);
+app.use(routeUsers);
+app.use(routeSales);
+app.use(routeTypes);
+app.use(routePresentations);
 
 app.listen(PORT, () => {
   console.log(`Server starting in http://localhost:${PORT}`);
