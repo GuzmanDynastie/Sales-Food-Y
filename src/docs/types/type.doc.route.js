@@ -1,5 +1,5 @@
 export const typeDocs = {
-  "/api/type": {
+  "/api/types": {
     get: {
       summary: "Obtener todos los tipos",
       description:
@@ -123,7 +123,7 @@ export const typeDocs = {
     },
   },
 
-  "/api/type/{id}": {
+  "/api/types/{id}": {
     get: {
       summary: "Obtener un tipo por su ID (solo activos)",
       description:

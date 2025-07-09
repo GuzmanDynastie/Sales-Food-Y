@@ -1,5 +1,5 @@
 export const userDocs = {
-  "/api/user": {
+  "/api/users": {
     get: {
       summary: "Obtener todos los usuarios",
       description:
@@ -130,7 +130,7 @@ export const userDocs = {
     },
   },
 
-  "/api/user/{id}": {
+  "/api/users/{id}": {
     get: {
       summary: "Obtener un usuario por su ID (solo activos)",
       description:

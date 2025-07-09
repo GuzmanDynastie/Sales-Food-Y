@@ -1,5 +1,5 @@
 export const productDocs = {
-  "/api/product": {
+  "/api/products": {
     get: {
       summary: "Obtener todos los productos",
       description:
@@ -129,7 +129,7 @@ export const productDocs = {
     },
   },
 
-  "/api/product/{id}": {
+  "/api/products/{id}": {
     get: {
       summary: "Obtener un producto por su ID (solo activos)",
       description:
@@ -194,7 +194,8 @@ export const productDocs = {
 
     put: {
       summary: "Actualizar un producto por su ID",
-      description: "Actualiza los datos de un producto (`activo` o `inactivo`).",
+      description:
+        "Actualiza los datos de un producto (`activo` o `inactivo`).",
       tags: ["Productos"],
       parameters: [
         {
@@ -344,6 +345,4 @@ export const productDocs = {
       },
     },
   },
-
-  // Puedes agregar más rutas aquí...
 };

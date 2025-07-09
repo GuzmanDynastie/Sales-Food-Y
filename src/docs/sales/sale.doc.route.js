@@ -1,7 +1,7 @@
 import { format } from "morgan";
 
 export const saleDocs = {
-  "/api/sale": {
+  "/api/sales": {
     get: {
       summary: "Obtener todas las ventas",
       description:
@@ -143,7 +143,7 @@ export const saleDocs = {
     },
   },
 
-  "/api/sale/{id}": {
+  "/api/sales/{id}": {
     get: {
       summary: "Obtener una venta por su ID (solo activos)",
       description:
