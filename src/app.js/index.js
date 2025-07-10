@@ -9,6 +9,7 @@ import routeSales from "../routes/sale.route.js";
 import routeTypes from "../routes/type.route.js";
 import routePresentations from "../routes/presentation.route.js";
 import routeOrigins from "../routes/origin.route.js";
+import routeSupply from "../routes/supply.route.js";
 
 process.loadEnvFile();
 
@@ -26,6 +27,7 @@ app.use(routeSales);
 app.use(routeTypes);
 app.use(routePresentations);
 app.use(routeOrigins);
+app.use(routeSupply);
 
 app.listen(PORT, () => {
   console.log(`Server starting in http://localhost:${PORT}`);
