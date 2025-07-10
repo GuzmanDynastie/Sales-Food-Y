@@ -30,7 +30,10 @@ export class OriginController {
    */
   static async getOriginById(req, res) {
     try {
-      const id = req.params.id;
+      const id = Number(req.params.id);
+      if (isNaN(id)){
+        return res.status(400).json({error: "ID must be a number"});
+      }
       const origin = await OriginModel.getOriginById(id);
       if (!origin) {
         return res.status(404).json({ error: "Origin not found" });
@@ -57,7 +60,7 @@ export class OriginController {
 
       const newOrigin = await OriginModel.createOrigin({ name });
       return res
-        .status(200)
+        .status(201)
         .json({ message: "Origin created successfully", origin: newOrigin });
     } catch (error) {
       res.status(500).json({ error: "Failed to create origin" });
@@ -72,7 +75,10 @@ export class OriginController {
    */
   static async updateOrigin(req, res) {
     try {
-      const id = req.params.id;
+      const id = Number(req.params.id);
+      if (isNaN(id)){
+        return res.status(400).json({error: "ID must be a number"});
+      }
       const { name, status } = req.body;
       if (!name || !["active", "inactive"].includes(status)) {
         return res.status(400).json({ error: "Missing required fields" });
@@ -103,7 +109,10 @@ export class OriginController {
    */
   static async deleteOrigin(req, res) {
     try {
-      const id = req.params.id;
+      const id = Number(req.params.id);
+      if (isNaN(id)){
+        return res.status(400).json({error: "ID must be a number"});
+      }
       const deletedOrigin = await OriginModel.softDeleteOrigin(id);
       if (!deletedOrigin) {
         return res

@@ -30,7 +30,10 @@ export class SalesController {
    */
   static async getSaleById(req, res) {
     try {
-      const id = req.params.id;
+      const id = Numbert(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID must be a number" });
+      }
       const sale = await SalesModel.getSaleById(id);
       if (!sale) {
         return res.status(404).json({ error: "Sale not found" });
@@ -51,9 +54,13 @@ export class SalesController {
   static async createSale(req, res) {
     try {
       const { product_id, user_id, origin_id, quantity } = req.body;
-
-      if (!product_id || !user_id || !origin_id || !quantity) {
-        return res.status(400).json({ error: "Missing required fileds" });
+      if (
+        typeof product_id !== "number" ||
+        typeof user_id !== "number" ||
+        typeof origin_id !== "number" ||
+        typeof quantity !== "number"
+      ) {
+        return res.status(400).json({ error: "Missing or invalid fileds" });
       }
 
       const newSale = await SalesModel.createSale({
@@ -63,7 +70,7 @@ export class SalesController {
         quantity,
       });
       res
-        .status(200)
+        .status(201)
         .json({ message: "Sale created successfully", sale: newSale });
     } catch (error) {
       res.status(500).json({ error: "Failed to create sale" });
@@ -78,7 +85,10 @@ export class SalesController {
    */
   static async cancelSale(req, res) {
     try {
-      const id = req.params.id;
+      const id = Numbert(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID must be a number" });
+      }
       const { reason } = req.body;
 
       const cancelledSale = await SalesModel.softCancelSale(id, reason);

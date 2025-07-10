@@ -30,7 +30,10 @@ export class ProductController {
    */
   static async getProductById(req, res) {
     try {
-      const id = req.params.id;
+      const id = Number(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID must be a number" });
+      }
       const product = await ProductModel.getProductById(id);
       if (!product) {
         return res.status(404).json({ error: "Product not found" });
@@ -51,8 +54,13 @@ export class ProductController {
   static async createProduct(req, res) {
     try {
       const { name, type_id, presentation_id, price } = req.body;
-      if (!name || !type_id || !presentation_id || price == null) {
-        return res.status(400).json({ error: "Missing required fields" });
+      if (
+        !name ||
+        typeof type_id !== "number" ||
+        typeof presentation_id !== "number" ||
+        typeof price !== "number"
+      ) {
+        return res.status(400).json({ error: "Missing or invalid fields" });
       }
 
       const newProduct = await ProductModel.createProduct({
@@ -62,7 +70,7 @@ export class ProductController {
         price,
       });
       res
-        .status(200)
+        .status(201)
         .json({ message: "Product created successfully", product: newProduct });
     } catch (error) {
       res.status(500).json({ error: "Failed to create new product" });
@@ -77,10 +85,19 @@ export class ProductController {
    */
   static async updateProduct(req, res) {
     try {
-      const id = req.params.id;
+      const id = Number(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID must be a number" });
+      }
       const { name, type_id, presentation_id, price, status } = req.body;
-      if (!name || !type_id || !presentation_id || price == null || !["active", "inactive"].includes(status)) {
-        return res.status(400).json({ error: "Missing required fields" });
+      if (
+        !name ||
+        typeof type_id !== "number" ||
+        typeof presentation_id !== "number" ||
+        typeof price !== "number" ||
+        !["active", "inactive"].includes(status)
+      ) {
+        return res.status(400).json({ error: "Missing or invalid fields" });
       }
 
       const updatedProduct = await ProductModel.updateProduct(id, {
@@ -95,12 +112,10 @@ export class ProductController {
           .status(404)
           .json({ error: "Product not found or already inactive" });
       }
-      res
-        .status(200)
-        .json({
-          message: "Product updated successfully",
-          product: updatedProduct,
-        });
+      res.status(200).json({
+        message: "Product updated successfully",
+        product: updatedProduct,
+      });
     } catch (error) {
       res.status(500).json({ error: "Failed to update the product" });
     }
@@ -114,20 +129,20 @@ export class ProductController {
    */
   static async deleteProduct(req, res) {
     try {
-      const id = req.params.id;
-
+      const id = Number(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID must be a number" });
+      }
       const softProduct = await ProductModel.softDeleteProduct(id);
       if (!softProduct) {
         return res
           .status(404)
           .json({ error: "Product not found or already inactive" });
       }
-      res
-        .status(200)
-        .json({
-          message: "Product soft deleted successfully",
-          product: softProduct,
-        });
+      res.status(200).json({
+        message: "Product soft deleted successfully",
+        product: softProduct,
+      });
     } catch (error) {
       res.status(500).json({ error: "Failed to delete the product" });
     }

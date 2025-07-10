@@ -31,7 +31,10 @@ export class UserController {
    */
   static async getUserById(req, res) {
     try {
-      const id = req.params.id;
+      const id = Number(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID must be a number" });
+      }
       const user = await UserModel.getUserById(id);
       if (!user) {
         return res.status(404).json({ error: "User not found" });
@@ -68,7 +71,7 @@ export class UserController {
       });
 
       res
-        .status(200)
+        .status(201)
         .json({ message: "User created successfully", user: newUser });
     } catch (error) {
       if (error.message.includes("UNIQUE constraint failed: users.email")) {
@@ -87,9 +90,19 @@ export class UserController {
    */
   static async updateUser(req, res) {
     try {
-      const id = req.params.id;
+      const id = Number(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID must be a number" });
+      }
       const { name, last_name, phone, email, password, status } = req.body;
-      if (!name || !last_name || !phone || !email || !password || !["active", "inactive"].includes(status)) {
+      if (
+        !name ||
+        !last_name ||
+        !phone ||
+        !email ||
+        !password ||
+        !["active", "inactive"].includes(status)
+      ) {
         return res.status(400).json({ message: "Missing required fields" });
       }
 
@@ -117,7 +130,10 @@ export class UserController {
    */
   static async deleteUser(req, res) {
     try {
-      const id = req.params.id;
+      const id = Number(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID must be a number" });
+      }
       const deletedUser = await UserModel.softDeleteUser(id);
       if (!deletedUser) {
         return res

@@ -30,7 +30,10 @@ export class TypesController {
    */
   static async getTypeById(req, res) {
     try {
-      const id = req.params.id;
+      const id = Number(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID must be a number" });
+      }
       const type = await TypesModel.getTypeById(id);
       if (!type) {
         return res.status(404).json({ error: "Product not found" });
@@ -56,7 +59,7 @@ export class TypesController {
       }
       const newType = await TypesModel.createType({ name });
       res
-        .status(200)
+        .status(201)
         .json({ message: "Type created successfully", type: newType });
     } catch (error) {
       res.status(500).json({ error: "Failed to create type" });
@@ -71,7 +74,10 @@ export class TypesController {
    */
   static async updateType(req, res) {
     try {
-      const id = req.params.id;
+      const id = Number(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID must be a number" });
+      }
       const { name, status } = req.body;
       if (!name || !["active", "inactive"].includes(status)) {
         return res.status(400).json({ error: "Missing required fields" });
@@ -98,7 +104,10 @@ export class TypesController {
    */
   static async deleteType(req, res) {
     try {
-      const id = req.params.id;
+      const id = Number(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID must be a number" });
+      }
       const softType = await TypesModel.softDeleteType(id);
       if (!softType) {
         return res

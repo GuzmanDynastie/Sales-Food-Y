@@ -30,7 +30,10 @@ export class PresentationController {
    */
   static async getPresentationById(req, res) {
     try {
-      const id = req.params.id;
+      const id = Number(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID must be a number" });
+      }
       const presentation = await PresentationModel.getPresentationById(id);
       if (!presentation) {
         return res.status(404).json({ error: "Presentation not found" });
@@ -58,7 +61,7 @@ export class PresentationController {
       const newPresentation = await PresentationModel.createPresentation({
         description,
       });
-      res.status(200).json({
+      res.status(201).json({
         message: "Presentation created successfully",
         presentation: newPresentation,
       });
@@ -75,7 +78,10 @@ export class PresentationController {
    */
   static async updatePresentation(req, res) {
     try {
-      const id = req.params.id;
+      const id = Number(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID must be a number" });
+      }
       const { description, status } = req.body;
       if (!description || !["active", "inactive"].includes(status)) {
         return res.status(400).json({ error: "Missing required fields" });
@@ -108,7 +114,10 @@ export class PresentationController {
    */
   static async deletePresentation(req, res) {
     try {
-      const id = req.params.id;
+      const id = Number(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID must be a number" });
+      }
       const deletedPresentation =
         await PresentationModel.softDeletePresentation(id);
       if (!deletedPresentation) {
