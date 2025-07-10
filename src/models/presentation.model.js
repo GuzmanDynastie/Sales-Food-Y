@@ -62,7 +62,7 @@ export class PresentationModel {
    * @param {Object} presentation - Objeto con los datos de la presentacion.
    * @param {string} presentation.description - Nombre de la presentacion.
    * @param {string} [presentation.status] - Estado de la presentacion ('active' o 'inactive'). Opcional
-   * @returns {Promise<void>} - Promesa que resuelve cuando la presentacion es actualizada.
+   * @returns {Promise<Object|null>} - Promesa que resuelve cuando la presentacion es actualizada o `null` si no se encontró el ID proporcionado.
    */
   static async updatePresentation(id, presentation) {
     const { description, status } = presentation;
@@ -81,7 +81,7 @@ export class PresentationModel {
   /**
    * Marca una presentacion como inactiva (eliminacion logica) por su ID.
    * @param {number} id - ID de la presentacion a desactivar.
-   * @returns {Promise<void>} - Promesa que resuelve cuando la presentacion se marca como inactiva.
+   * @returns {Promise<Object|null>} - Promesa que resuelve cuando la presentacion se marca como inactiva o `null` si no se encontró el ID proporcionado.
    */
   static async softDeletePresentation(id) {
     try {

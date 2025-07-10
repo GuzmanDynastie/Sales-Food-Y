@@ -14,7 +14,7 @@ export class ProductModel {
     let query = `SELECT * FROM products`;
     const params = [];
 
-    const validStatuses = ['active', 'inactive'];
+    const validStatuses = ["active", "inactive"];
     if (validStatuses.includes(statusFilter)) {
       query += ` WHERE status = $1`;
       params.push(statusFilter);
@@ -64,7 +64,7 @@ export class ProductModel {
    * @param {number} product.presentation_id - ID de la presentacion.
    * @param {number} product.price - Precio del producto.
    * @param {string} [product.status] - Estado del producto ('active' o 'inactive'). Opcional
-   * @returns {Promise<void>} - Promesa que resuelve cuando el producto es actualizado.
+   * @returns {Promise<Object|null>} - Promesa que resuelve cuando el producto es actualizado o `null` si no se encontró el ID proporcionado.
    */
   static async updateProduct(id, product) {
     const { name, type_id, presentation_id, price, status } = product;
@@ -79,7 +79,7 @@ export class ProductModel {
   /**
    * Marca un producto como inactivo (eliminacion logica) por su ID.
    * @param {number} id - ID del producto a desactivar.
-   * @returns {Promise<void>} - Promesa que resuelve cuando el producto se marca como inactivo.
+   * @returns {Promise<Object|null>} - Promesa que resuelve cuando el producto se marca como inactivo o `null` si no se encontró el ID proporcionado.
    */
   static async softDeleteProduct(id) {
     const result = await master.query(

@@ -38,11 +38,11 @@ export class SalesModel {
 
   /**
    * Crea una nueva venta con estado 'active' por defecto.
-   * @param {Object} venta - Objeto con los datos de la venta.
-   * @param {Number} venta.product_id - ID del producto vendido.
-   * @param {Number} venta.user_id - ID del usuario que registra la venta.
-   * @param {Number} venta.origin_id - ID del origen de la venta (ej. carniceria, directo, etc.).
-   * @param {Number} venta.quantity - Cantidad de productos vendidos.
+   * @param {Object} sale - Objeto con los datos de la venta.
+   * @param {Number} sale.product_id - ID del producto vendido.
+   * @param {Number} sale.user_id - ID del usuario que registra la venta.
+   * @param {Number} sale.origin_id - ID del origen de la venta (ej. carniceria, directo, etc.).
+   * @param {Number} sale.quantity - Cantidad de productos vendidos.
    * @returns {Promise<void>} - Promesa que resuelve cuando la venta esta creada.
    */
   static async createSale(sale) {
@@ -62,7 +62,7 @@ export class SalesModel {
    * Cancela logicamente la venta por su ID.
    * @param {number|string} id - ID de la venta.
    * @param {string} [reason] - Motivo opcional de la cancelacion (se almacena en la columna `reason`).
-   * @returns {Promise<Object|undefined>} - Promesa que se resualve cuando la venta ha sido cancelada.
+   * @returns {Promise<Object|null>} - Promesa que se resualve cuando la venta ha sido cancelada o `null` si no se encontró el ID proporcionado.
    */
   static async softCancelSale(id, reason) {
     try {

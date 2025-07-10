@@ -62,7 +62,7 @@ export class OriginModel {
    * @param {Object} origin - Objeto con los datos del origen.
    * @param {string} origin.name - Nombre del origen.
    * @param {string} [origin.status] - Estado del origen ('active' o 'inactive'). Opcional
-   * @returns {Promise<void>} - Promesa que resuelve cuando el origen es actualizado.
+   * @returns {Promise<Object|null>} - Promesa que resuelve cuando el origen es actualizado o `null` si no se encontró el ID proporcionado.
    */
   static async updateOrigin(id, origin) {
     const { name, status } = origin;
@@ -81,7 +81,7 @@ export class OriginModel {
   /**
    * Marca un origen como inactivo (eliminacion logica) por su ID.
    * @param {number} id - ID del origen a desactivar.
-   * @returns {Promise<void>} - Promesa que resuelve cuando el origen se marca como inactivo.
+   * @returns {Promise<Object|null>} - Promesa que resuelve cuando el origen se marca como inactivo o `null` si no se encontró el ID proporcionado.
    */
   static async softDeleteOrigin(id) {
     try {

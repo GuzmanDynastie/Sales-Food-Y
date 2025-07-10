@@ -62,7 +62,7 @@ export class TypesModel {
    * @param {Object} type - Objeto con los datos del tipo.
    * @param {string} type.name - Nombre del tipo.
    * @param {string} [type.status] - Estado del tipo ('active' o 'inactive'). Opcional
-   * @returns {Promise<void>} - Promesa que resuelve cuando el tipo es actualizado.
+   * @returns {Promise<Object|null>} - Promesa que resuelve cuando el tipo es actualizado o `null` si no se encontró el ID proporcionado.
    */
   static async updateType(id, type) {
     const { name, status } = type;
@@ -81,7 +81,7 @@ export class TypesModel {
   /**
    * Marca un tipo como inactivo (eliminacion logica) por su ID.
    * @param {number} id - ID del tipo a desactivar.
-   * @returns {Promise<void>} - Promesa que resuelve cuando el tipo se marca como inactivo.
+   * @returns {Promise<Object|null>} - Promesa que resuelve cuando el tipo se marca como inactivo o `null` si no se encontró el ID proporcionado.
    */
   static async softDeleteType(id) {
     try {

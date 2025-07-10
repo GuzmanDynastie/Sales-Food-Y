@@ -74,7 +74,7 @@ export class UserModel {
    * @param {string} usuario.email - Correo electronico del usuario.
    * @param {string} usuario.password - Contrasena del usuario.
    * @param {string} [usuario.status] - Estado del usuario ('active' o 'inactive'). Opcional
-   * @returns {Promise<void>} - Promesa que resuelve cuando el usuario esta creado.
+   * @returns {Promise<Object|null>} - Promesa que resuelve cuando el usuario esta creado o `null` si no se encontró el ID proporcionado.
    */
   static async updateUser(id, user) {
     const { name, last_name, phone, email, password } = user;
@@ -90,7 +90,7 @@ export class UserModel {
   /**
    * Marca un usuario como ianctivo (eliminacion logica) por su ID.
    * @param {number} id - ID del usuario a desactivar.
-   * @returns {Promise<void>} - Promesa que resuelve cuando el usuario se marca como inactivo.
+   * @returns {Promise<Object|null>} - Promesa que resuelve cuando el usuario se marca como inactivo o `null` si no se encontró el ID proporcionado.
    */
   static async softDeleteUser(id) {
     const result = await master.query(
