@@ -1,4 +1,5 @@
 import { OriginModel } from "../models/origin.model.js";
+import { Validators } from "../utils/validators.js";
 
 export class OriginController {
   /**
@@ -31,8 +32,8 @@ export class OriginController {
   static async getOriginById(req, res) {
     try {
       const id = Number(req.params.id);
-      if (isNaN(id)){
-        return res.status(400).json({error: "ID must be a number"});
+      if (!Validators.isValidNumberID(id)) {
+        return res.status(400).json({ error: "ID must be a number" });
       }
       const origin = await OriginModel.getOriginById(id);
       if (!origin) {
@@ -54,8 +55,10 @@ export class OriginController {
   static async createOrigin(req, res) {
     try {
       const { name } = req.body;
-      if (!name) {
-        return res.status(400).json({ error: "Missing required field" });
+      if (!Validators.isNonEmptyString(name)) {
+        return res
+          .status(400)
+          .json({ error: "name must be a non-empty string" });
       }
 
       const newOrigin = await OriginModel.createOrigin({ name });
@@ -76,12 +79,20 @@ export class OriginController {
   static async updateOrigin(req, res) {
     try {
       const id = Number(req.params.id);
-      if (isNaN(id)){
-        return res.status(400).json({error: "ID must be a number"});
+      if (!Validators.isValidNumberID(id)) {
+        return res.status(400).json({ error: "ID must be a number" });
       }
       const { name, status } = req.body;
-      if (!name || !["active", "inactive"].includes(status)) {
-        return res.status(400).json({ error: "Missing required fields" });
+      if (
+        !Validators.isNonEmptyString(name) ||
+        !Validators.isValidStatus(status)
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "name must be a non-empty string and status must contain a valid status.",
+          });
       }
       const updatedOrigin = await OriginModel.updateOrigin(id, {
         name,
@@ -110,8 +121,8 @@ export class OriginController {
   static async deleteOrigin(req, res) {
     try {
       const id = Number(req.params.id);
-      if (isNaN(id)){
-        return res.status(400).json({error: "ID must be a number"});
+      if (!Validators.isValidNumberID(id)) {
+        return res.status(400).json({ error: "ID must be a number" });
       }
       const deletedOrigin = await OriginModel.softDeleteOrigin(id);
       if (!deletedOrigin) {

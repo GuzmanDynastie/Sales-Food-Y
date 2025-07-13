@@ -1,4 +1,5 @@
 import { ProductModel } from "../models/product.model.js";
+import { Validators } from "../utils/validators.js";
 
 export class ProductController {
   /**
@@ -31,7 +32,7 @@ export class ProductController {
   static async getProductById(req, res) {
     try {
       const id = Number(req.params.id);
-      if (isNaN(id)) {
+      if (!Validators.isValidNumberID(id)) {
         return res.status(400).json({ error: "ID must be a number" });
       }
       const product = await ProductModel.getProductById(id);
@@ -55,12 +56,12 @@ export class ProductController {
     try {
       const { name, type_id, presentation_id, price } = req.body;
       if (
-        !name ||
-        typeof type_id !== "number" ||
-        typeof presentation_id !== "number" ||
-        typeof price !== "number"
+        !Validators.isNonEmptyString(name) ||
+        !Validators.isPositiveNumber(type_id) ||
+        !Validators.isPositiveNumber(presentation_id) ||
+        !Validators.isPositiveNumber(price)
       ) {
-        return res.status(400).json({ error: "Missing or invalid fields" });
+        return res.status(400).json({ error: "name must be a non-empty string, type_id, presentation and price must be positive numbers" });
       }
 
       const newProduct = await ProductModel.createProduct({
@@ -86,18 +87,18 @@ export class ProductController {
   static async updateProduct(req, res) {
     try {
       const id = Number(req.params.id);
-      if (isNaN(id)) {
+      if (!Validators.isValidNumberID(id)) {
         return res.status(400).json({ error: "ID must be a number" });
       }
       const { name, type_id, presentation_id, price, status } = req.body;
       if (
-        !name ||
-        typeof type_id !== "number" ||
-        typeof presentation_id !== "number" ||
-        typeof price !== "number" ||
-        !["active", "inactive"].includes(status)
+        !Validators.isNonEmptyString(name) ||
+        !Validators.isPositiveNumber(type_id) ||
+        !Validators.isPositiveNumber(presentation_id) ||
+        !Validators.isPositiveNumber(price) ||
+        !Validators.isValidStatus(status)
       ) {
-        return res.status(400).json({ error: "Missing or invalid fields" });
+        return res.status(400).json({ error: "name must be a non-empty string, type_id, presentation and price must be positive numbers, and status must contain a valid status." });
       }
 
       const updatedProduct = await ProductModel.updateProduct(id, {
@@ -130,7 +131,7 @@ export class ProductController {
   static async deleteProduct(req, res) {
     try {
       const id = Number(req.params.id);
-      if (isNaN(id)) {
+      if (!Validators.isValidNumberID(id)) {
         return res.status(400).json({ error: "ID must be a number" });
       }
       const softProduct = await ProductModel.softDeleteProduct(id);

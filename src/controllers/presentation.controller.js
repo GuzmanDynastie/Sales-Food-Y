@@ -1,4 +1,5 @@
 import { PresentationModel } from "../models/presentation.model.js";
+import { Validators } from "../utils/validators.js";
 
 export class PresentationController {
   /**
@@ -31,7 +32,7 @@ export class PresentationController {
   static async getPresentationById(req, res) {
     try {
       const id = Number(req.params.id);
-      if (isNaN(id)) {
+      if (!Validators.isValidNumberID(id)) {
         return res.status(400).json({ error: "ID must be a number" });
       }
       const presentation = await PresentationModel.getPresentationById(id);
@@ -54,8 +55,10 @@ export class PresentationController {
   static async createPresentation(req, res) {
     try {
       const { description } = req.body;
-      if (!description) {
-        return res.status(400).json({ error: "Missing required field" });
+      if (!Validators.isNonEmptyString(description)) {
+        return res
+          .status(400)
+          .json({ error: "description must be a non-empty string" });
       }
 
       const newPresentation = await PresentationModel.createPresentation({
@@ -79,12 +82,20 @@ export class PresentationController {
   static async updatePresentation(req, res) {
     try {
       const id = Number(req.params.id);
-      if (isNaN(id)) {
+      if (!Validators.isValidNumberID(id)) {
         return res.status(400).json({ error: "ID must be a number" });
       }
       const { description, status } = req.body;
-      if (!description || !["active", "inactive"].includes(status)) {
-        return res.status(400).json({ error: "Missing required fields" });
+      if (
+        !Validators.isNonEmptyString(description) ||
+        !Validators.isValidStatus(status)
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "description must be a non-empty string and status must contain a valid status.",
+          });
       }
 
       const updatedPresentation = await PresentationModel.updatePresentation(
@@ -115,7 +126,7 @@ export class PresentationController {
   static async deletePresentation(req, res) {
     try {
       const id = Number(req.params.id);
-      if (isNaN(id)) {
+      if (!Validators.isValidNumberID(id)) {
         return res.status(400).json({ error: "ID must be a number" });
       }
       const deletedPresentation =

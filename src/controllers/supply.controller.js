@@ -1,4 +1,5 @@
 import { SupplyModel } from "../models/supply.model.js";
+import { Validators } from "../utils/validators.js";
 
 export class SupplyController {
   static async getSupplies(req, res) {
@@ -31,7 +32,7 @@ export class SupplyController {
   static async getSupplyById(req, res) {
     try {
       const id = Number(req.params.id);
-      if (isNaN(id)) {
+      if (!Validators.isValidNumberID(id)) {
         return res.status(400).json({ error: "ID must be a number" });
       }
       const supply = await SupplyModel.getSupplyById(id);
@@ -54,8 +55,16 @@ export class SupplyController {
   static async createSupply(req, res) {
     try {
       const { name, unit } = req.body;
-      if (!name || !unit) {
-        return res.status(400).json({ error: "Missing required fields" });
+      if (
+        !Validators.isNonEmptyString(name) ||
+        !Validators.isPositiveNumber(unit)
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "name must be a non-empty string and unit must be positive numbers.",
+          });
       }
 
       const newSupply = await SupplyModel.createSupply({ name, unit });
@@ -76,12 +85,21 @@ export class SupplyController {
   static async updateSupply(req, res) {
     try {
       const id = Number(req.params.id);
-      if (isNaN(id)) {
+      if (!Validators.isValidNumberID(id)) {
         return res.status(400).json("ID must be a number");
       }
       const { name, unit, status } = req.body;
-      if (!name || !unit || !["active", "inactive"].includes(status)) {
-        return res.status(400).json({ error: "Missing or invalid fields" });
+      if (
+        !Validators.isNonEmptyString(name) ||
+        !Validators.isPositiveNumber(unit) ||
+        !Validators.isValidStatus(status)
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "name must be a non-empty string, unit must be positive numbers, and status must contain a valid status.",
+          });
       }
 
       const updatedSupply = await SupplyModel.updateSupply(id, {
@@ -111,7 +129,7 @@ export class SupplyController {
   static async deleteSupply(req, res) {
     try {
       const id = Number(req.params.id);
-      if (isNaN(id)) {
+      if (!Validators.isValidNumberID(id)) {
         return res.status(400).json({ error: "ID must be a number" });
       }
 

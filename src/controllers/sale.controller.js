@@ -1,4 +1,5 @@
 import { SalesModel } from "../models/sale.model.js";
+import { Validators } from "../utils/validators.js";
 
 export class SalesController {
   /**
@@ -31,7 +32,7 @@ export class SalesController {
   static async getSaleById(req, res) {
     try {
       const id = Numbert(req.params.id);
-      if (isNaN(id)) {
+      if (!Validators.isValidNumberID(id)) {
         return res.status(400).json({ error: "ID must be a number" });
       }
       const sale = await SalesModel.getSaleById(id);
@@ -55,12 +56,17 @@ export class SalesController {
     try {
       const { product_id, user_id, origin_id, quantity } = req.body;
       if (
-        typeof product_id !== "number" ||
-        typeof user_id !== "number" ||
-        typeof origin_id !== "number" ||
-        typeof quantity !== "number"
+        !Validators.isPositiveNumber(product_id) ||
+        !Validators.isPositiveNumber(user_id) ||
+        !Validators.isPositiveNumber(origin_id) ||
+        !Validators.isPositiveNumber(quantity)
       ) {
-        return res.status(400).json({ error: "Missing or invalid fileds" });
+        return res
+          .status(400)
+          .json({
+            error:
+              "product_id, user_id, origin_id and quantity must be positive numbers.",
+          });
       }
 
       const newSale = await SalesModel.createSale({
@@ -86,7 +92,7 @@ export class SalesController {
   static async cancelSale(req, res) {
     try {
       const id = Numbert(req.params.id);
-      if (isNaN(id)) {
+      if (!Validators.isValidNumberID(id)) {
         return res.status(400).json({ error: "ID must be a number" });
       }
       const { reason } = req.body;

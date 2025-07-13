@@ -1,4 +1,5 @@
 import { TypesModel } from "../models/type.model.js";
+import { Validators } from "../utils/validators.js";
 
 export class TypesController {
   /**
@@ -31,7 +32,7 @@ export class TypesController {
   static async getTypeById(req, res) {
     try {
       const id = Number(req.params.id);
-      if (isNaN(id)) {
+      if (!Validators.isValidNumberID(id)) {
         return res.status(400).json({ error: "ID must be a number" });
       }
       const type = await TypesModel.getTypeById(id);
@@ -54,8 +55,10 @@ export class TypesController {
   static async createType(req, res) {
     try {
       const { name } = req.body;
-      if (!name) {
-        return res.status(400).json({ error: "Missing required field" });
+      if (!Validators.isNonEmptyString(name)) {
+        return res
+          .status(400)
+          .json({ error: "name must be a non-empty string." });
       }
       const newType = await TypesModel.createType({ name });
       res
@@ -75,12 +78,20 @@ export class TypesController {
   static async updateType(req, res) {
     try {
       const id = Number(req.params.id);
-      if (isNaN(id)) {
+      if (!Validators.isValidNumberID(id)) {
         return res.status(400).json({ error: "ID must be a number" });
       }
       const { name, status } = req.body;
-      if (!name || !["active", "inactive"].includes(status)) {
-        return res.status(400).json({ error: "Missing required fields" });
+      if (
+        !Validators.isNonEmptyString(name) ||
+        !Validators.isValidStatus(status)
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "name must be a non-empty string and status must contain a valid status.",
+          });
       }
       const updatedType = await TypesModel(id, { name, status });
       if (!updatedType) {
@@ -105,7 +116,7 @@ export class TypesController {
   static async deleteType(req, res) {
     try {
       const id = Number(req.params.id);
-      if (isNaN(id)) {
+      if (!Validators.isValidNumberID(id)) {
         return res.status(400).json({ error: "ID must be a number" });
       }
       const softType = await TypesModel.softDeleteType(id);

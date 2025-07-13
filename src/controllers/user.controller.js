@@ -1,5 +1,6 @@
 import { UserModel } from "../models/user.model.js";
 import { hashPassword, comparePassword } from "../utils/password.js";
+import { Validators } from "../utils/validators.js";
 
 export class UserController {
   /**
@@ -32,7 +33,7 @@ export class UserController {
   static async getUserById(req, res) {
     try {
       const id = Number(req.params.id);
-      if (isNaN(id)) {
+      if (!Validators.isValidNumberID(id)) {
         return res.status(400).json({ error: "ID must be a number" });
       }
       const user = await UserModel.getUserById(id);
@@ -56,8 +57,19 @@ export class UserController {
     try {
       const { name, last_name, phone, email, password } = req.body;
 
-      if (!name || !last_name || !phone || !email || !password) {
-        return res.status(400).json({ message: "Missing required fields" });
+      if (
+        !Validators.isNonEmptyString(name) ||
+        !Validators.isNonEmptyString(last_name) ||
+        !Validators.isNonEmptyString(phone) ||
+        !Validators.isNonEmptyString(email) ||
+        !Validators.isNonEmptyString(password)
+      ) {
+        return res
+          .status(400)
+          .json({
+            message:
+              "name, last_name, phone, email, and password must be a non-empty string.",
+          });
       }
 
       const hashedPassword = await hashPassword(password);
@@ -91,19 +103,24 @@ export class UserController {
   static async updateUser(req, res) {
     try {
       const id = Number(req.params.id);
-      if (isNaN(id)) {
+      if (!Validators.isValidNumberID(id)) {
         return res.status(400).json({ error: "ID must be a number" });
       }
       const { name, last_name, phone, email, password, status } = req.body;
       if (
-        !name ||
-        !last_name ||
-        !phone ||
-        !email ||
-        !password ||
-        !["active", "inactive"].includes(status)
+        !Validators.isNonEmptyString(name) ||
+        !Validators.isNonEmptyString(last_name) ||
+        !Validators.isNonEmptyString(phone) ||
+        !Validators.isNonEmptyString(email) ||
+        !Validators.isNonEmptyString(password) ||
+        !Validators.isValidStatus(status)
       ) {
-        return res.status(400).json({ message: "Missing required fields" });
+        return res
+          .status(400)
+          .json({
+            message:
+              "name, last_name, phone, email, and password must be a non-empty string and status must contain a valid status.",
+          });
       }
 
       const updatedUser = await UserModel.updateUser(id, {
@@ -131,7 +148,7 @@ export class UserController {
   static async deleteUser(req, res) {
     try {
       const id = Number(req.params.id);
-      if (isNaN(id)) {
+      if (!Validators.isValidNumberID(id)) {
         return res.status(400).json({ error: "ID must be a number" });
       }
       const deletedUser = await UserModel.softDeleteUser(id);
