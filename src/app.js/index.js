@@ -12,6 +12,7 @@ import routeOrigins from "../routes/origin.route.js";
 import routeSupply from "../routes/supply.route.js";
 import routeSupplyEntries from "../routes/supply_entry.route.js";
 import routeSupplyConsumption from "../routes/supply_consumption.route.js";
+import routeRecipes from "../routes/recipe.route.js";
 
 process.loadEnvFile();
 
@@ -32,6 +33,7 @@ app.use(routeOrigins);
 app.use(routeSupply);
 app.use(routeSupplyEntries);
 app.use(routeSupplyConsumption);
+app.use(routeRecipes);
 
 app.listen(PORT, () => {
   console.log(`Server starting in http://localhost:${PORT}`);

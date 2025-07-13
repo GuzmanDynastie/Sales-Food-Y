@@ -7,12 +7,13 @@ import { originDocs } from "../origins/origin.doc.route.js";
 import { supplyDocs } from "../supplies/supply.doc.route.js";
 import { supplyEntryDocs } from "../supply_entries/supply_entries.doc.route.js";
 import { supplyConsumptionsDocs } from "../supply_consumptions/supply_consumptions.doc.route.js";
+import { recipeDocs } from "../recipes/recipe.doc.route.js";
 
 export const swaggerDefinition = {
   openapi: "3.1.1",
   info: {
     title: "Sistema de Gestion de Productos y Usuarios - API REST",
-    version: "1.0.1",
+    version: "1.0.2",
     description:
       "Esta documentacion detalla los endpoints disponibles para gestionar productos, usuarios y sus operaciones relacionadas. Incluye operaciones CRUD, filtros y validaciones.",
       contact: {
@@ -37,5 +38,6 @@ export const swaggerDefinition = {
     ...supplyDocs,
     ...supplyEntryDocs,
     ...supplyConsumptionsDocs,
+    ...recipeDocs,
   },
 };
