@@ -10,6 +10,8 @@ import routeTypes from "../routes/type.route.js";
 import routePresentations from "../routes/presentation.route.js";
 import routeOrigins from "../routes/origin.route.js";
 import routeSupply from "../routes/supply.route.js";
+import routeSupplyEntries from "../routes/supply_entry.route.js";
+import routeSupplyConsumption from "../routes/supply_consumption.route.js";
 
 process.loadEnvFile();
 
@@ -28,6 +30,8 @@ app.use(routeTypes);
 app.use(routePresentations);
 app.use(routeOrigins);
 app.use(routeSupply);
+app.use(routeSupplyEntries);
+app.use(routeSupplyConsumption);
 
 app.listen(PORT, () => {
   console.log(`Server starting in http://localhost:${PORT}`);
