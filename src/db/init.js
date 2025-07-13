@@ -6,7 +6,8 @@ export async function initDB() {
         CREATE TABLE IF NOT EXISTS types (
             id SERIAL PRIMARY KEY,
             name TEXT UNIQUE NOT NULL,
-            status TEXT DEFAULT 'active'
+            status TEXT DEFAULT 'active',
+            cancelled_at TIMESTAMP NULL
         );
     `);
 
@@ -15,7 +16,8 @@ export async function initDB() {
         CREATE TABLE IF NOT EXISTS presentations (
             id SERIAL PRIMARY KEY,
             descrption TEXT UNIQUE NOT NULL,
-            status TEXT DEFAULT 'active'
+            status TEXT DEFAULT 'active',
+            cancelled_at TIMESTAMP NULL
         );
     `);
 
@@ -24,7 +26,8 @@ export async function initDB() {
         CREATE TABLE IF NOT EXISTS origins (
             id SERIAL PRIMARY KEY,
             name TEXT UNIQUE NOT NULL,
-            status TEXT DEFAULT 'active'
+            status TEXT DEFAULT 'active',
+            cancelled_at TIMESTAMP NULL
         );
     `);
 
@@ -36,7 +39,8 @@ export async function initDB() {
             type_id INTEGER NOT NULL REFERENCES types(id),
             presentation_id INTEGER NOT NULL REFERENCES presentations(id),
             price NUMERIC(10, 2) NOT NULL,
-            status TEXT DEFAULT 'active'
+            status TEXT DEFAULT 'active',
+            cancelled_at TIMESTAMP NULL
         );
     `);
 
@@ -49,7 +53,8 @@ export async function initDB() {
             phone TEXT UNIQUE NOT NULL,
             email TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
-            status TEXT DEFAULT 'active'
+            status TEXT DEFAULT 'active',
+            cancelled_at TIMESTAMP NULL
         );
     `);
 
@@ -74,7 +79,8 @@ export async function initDB() {
             id SERIAL PRIMARY KEY,
             name TEXT UNIQUE NOT NULL,
             unit TEXT NOT NULL,
-            status TEXT DEFAULT 'active'
+            status TEXT DEFAULT 'active',
+            cancelled_at TIMESTAMP NULL
         );
     `);
 
@@ -86,7 +92,9 @@ export async function initDB() {
             quantity NUMERIC(10, 2) NOT NULL,
             total_price NUMERIC(10, 2) NOT NULL,
             unit_cost NUMERIC(10, 2) NOT NULL,
-            date TIMESTAMP NOT NULL
+            date TIMESTAMP NOT NULL,
+            status TEXT DEFAULT 'active',
+            cancelled_at TIMESTAMP NULL
         );
     `);
 
@@ -97,7 +105,9 @@ export async function initDB() {
             supply_id INTEGER NOT NULL REFERENCES supplies(id),
             quantity NUMERIC(10, 2) NOT NULL,
             date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            reason TEXT
+            reason TEXT,
+            status TEXT DEFAULT 'active',
+            cancelled_at TIMESTAMP NULL
         );
     `);
 
@@ -108,7 +118,8 @@ export async function initDB() {
             product_id INTEGER NOT NULL REFERENCES products(id),
             supply_id INTEGER NOT NULL REFERENCES supplies(id),
             quantity_per_unit NUMERIC(10, 2) NOT NULL,
-            status TEXT DEFAULT 'active'
+            status TEXT DEFAULT 'active',
+            cancelled_at TIMESTAMP NULL
         );
     `);
 }
