@@ -10,5 +10,13 @@ const options = {
 const swaggerSpec = swaggerJSDoc(options);
 
 export function setupSwagger(app) {
-  app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+  app.use(
+    "/api-docs",
+    swaggerUI.serve,
+    swaggerUI.setup(swaggerSpec, {
+      swaggerOptions: {
+        docExpansion: "none",
+      },
+    })
+  );
 }
