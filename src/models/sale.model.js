@@ -70,8 +70,7 @@ export class SalesModel {
         `UPDATE sales SET status = 'cancelled', reason = $1, cancelled_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
         [reason, id]
       );
-      if (result.rowCount === 0) return null;
-      return result.rows[0];
+      return result.rowCount > 0 ? result.rows[0] : null;
     } catch (error) {
       throw error;
     }

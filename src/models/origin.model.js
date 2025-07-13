@@ -71,8 +71,7 @@ export class OriginModel {
         `UPDATE origins SET name = $1, status = $2 WHERE id = $3 RETURNING *`,
         [name, status, id]
       );
-      if (result.rowCount === 0) return null;
-      return result.rows[0];
+      return result.rowCount > 0 ? result.rows[0] : null;
     } catch (error) {
       throw error;
     }
@@ -86,11 +85,10 @@ export class OriginModel {
   static async softDeleteOrigin(id) {
     try {
       const result = await master.query(
-        `UPDATE origins set status = 'inactive' WHERE id = $1 RETURNING *`,
+        `UPDATE origins set status = 'inactive', cancelled_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING *`,
         [id]
       );
-      if (result.rowCount === 0) return null;
-      return result.rows[0];
+      return result.rowCount > 0 ? result.rows[0] : null;
     } catch (error) {
       throw error;
     }

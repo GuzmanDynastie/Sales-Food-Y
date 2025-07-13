@@ -67,13 +67,16 @@ export class ProductModel {
    * @returns {Promise<Object|null>} - Promesa que resuelve cuando el producto es actualizado o `null` si no se encontró el ID proporcionado.
    */
   static async updateProduct(id, product) {
-    const { name, type_id, presentation_id, price, status } = product;
-    const result = await master.query(
-      `UPDATE products SET name = $1, type_id = $2, presentation_id = $3, price = $4, status = $5 WHERE id = $6 RETURNING *`,
-      [name, type_id, presentation_id, price, status, id]
-    );
-    if (result.rowCount === 0) return null;
-    return result.rows[0];
+    try {
+      const { name, type_id, presentation_id, price, status } = product;
+      const result = await master.query(
+        `UPDATE products SET name = $1, type_id = $2, presentation_id = $3, price = $4, status = $5 WHERE id = $6 RETURNING *`,
+        [name, type_id, presentation_id, price, status, id]
+      );
+      return result.rowCount > 0 ? result.rows[0] : null;
+    } catch (error) {
+      throw error;
+    }
   }
 
   /**
@@ -82,11 +85,14 @@ export class ProductModel {
    * @returns {Promise<Object|null>} - Promesa que resuelve cuando el producto se marca como inactivo o `null` si no se encontró el ID proporcionado.
    */
   static async softDeleteProduct(id) {
-    const result = await master.query(
-      `UPDATE products SET status = 'inactive' WHERE id = $1 RETURNING *`,
-      [id]
-    );
-    if (result.rowCount === 0) return null;
-    return result.rows[0];
+    try {
+      const result = await master.query(
+        `UPDATE products SET status = 'inactive', cancelled_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING *`,
+        [id]
+      );
+      return result.rowCount > 0 ? result.rows[0] : null;
+    } catch (error) {
+      throw error;
+    }
   }
 }

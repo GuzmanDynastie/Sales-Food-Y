@@ -71,8 +71,7 @@ export class PresentationModel {
         `UPDATE presentations SET description = $1, status = $2 WHERE id = $3 RETURNING *`,
         [description, status, id]
       );
-      if (result.rowCount === 0) return null;
-      return result.rows[0];
+      return result.rowCount > 0 ? result.rows[0] : null;
     } catch (error) {
       throw error;
     }
@@ -86,11 +85,10 @@ export class PresentationModel {
   static async softDeletePresentation(id) {
     try {
       const result = await master.query(
-        `UPDATE presentations SET status = 'inactive' WHERE id = $1 RETURNING *`,
+        `UPDATE presentations SET status = 'inactive', cancelled_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING *`,
         [id]
       );
-      if (result.rowCount === 0) return null;
-      return result.rows[0];
+      return result.rowCount > 0 ? result.rows[0] : null;
     } catch (error) {
       throw error;
     }

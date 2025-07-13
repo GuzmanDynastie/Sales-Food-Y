@@ -42,7 +42,7 @@ export class SupplyModel {
    * Crea un nuevo insumo con estado 'active' por defecto.
    * @param {Object} supply - Objeto con los datos del insumo.
    * @param {string} supply.name - Nombre del insumo.
-   * @param {Number} supply.unit - Unidad del insumo registrado.
+   * @param {number} supply.unit - Unidad del insumo registrado.
    * @returns {Promise<Object>} - Promesa que resuelve cuando el insumo esta creado.
    */
   static async createSupply(supply) {
@@ -74,8 +74,7 @@ export class SupplyModel {
         `UPDATE supplies SET name = $1, unit = $2, status = $3 WHERE id = $4 RETURNING *`,
         [name, unit, status, id]
       );
-      if (result.rowCount === 0) return null;
-      return result.rows[0];
+      return result.rowCount > 0 ? result.rows[0] : null;
     } catch (error) {
       throw error;
     }
@@ -89,11 +88,10 @@ export class SupplyModel {
   static async softDeleteSupply(id) {
     try {
       const result = await master.query(
-        `UPDATE supplies SET status = 'inactive' WHERE id = $1 RETURNING *`,
+        `UPDATE supplies SET status = 'inactive', cancelled_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING *`,
         [id]
       );
-      if (result.rowCount === 0) return null;
-      return result.rows[0];
+      return result.rowCount > 0 ? result.rows[0] : null;
     } catch (error) {
       throw error;
     }

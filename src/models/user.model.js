@@ -77,14 +77,16 @@ export class UserModel {
    * @returns {Promise<Object|null>} - Promesa que resuelve cuando el usuario esta creado o `null` si no se encontró el ID proporcionado.
    */
   static async updateUser(id, user) {
-    const { name, last_name, phone, email, password } = user;
-    const result = await master.query(
-      `UPDATE users SET name = $1, last_name = $2, phone = $3, email = $4, password = $5 WHERE id = $6 RETURNING *`,
-      [name, last_name, phone, email, password, id]
-    );
-
-    if (!result.rowCount === 0) return null;
-    return result.rows[0];
+    try {
+      const { name, last_name, phone, email, password } = user;
+      const result = await master.query(
+        `UPDATE users SET name = $1, last_name = $2, phone = $3, email = $4, password = $5 WHERE id = $6 RETURNING *`,
+        [name, last_name, phone, email, password, id]
+      );
+      return result.rowCount > 0 ? result.rows[0] : null;
+    } catch (error) {
+      throw error;
+    }
   }
 
   /**
@@ -93,13 +95,15 @@ export class UserModel {
    * @returns {Promise<Object|null>} - Promesa que resuelve cuando el usuario se marca como inactivo o `null` si no se encontró el ID proporcionado.
    */
   static async softDeleteUser(id) {
-    const result = await master.query(
-      `UPDATE users SET status = 'inactive' WHERE id = $1 RETURNING *`,
-      [id]
-    );
-
-    if (!result.rowCount === 0) return null;
-    return result.rows[0];
+    try {
+      const result = await master.query(
+        `UPDATE users SET status = 'inactive', cancelled_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING *`,
+        [id]
+      );
+      return result.rowCount > 0 ? result.rows[0] : null;
+    } catch (error) {
+      throw error;
+    }
   }
 
   /**
