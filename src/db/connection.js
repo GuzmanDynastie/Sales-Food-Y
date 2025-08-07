@@ -28,7 +28,7 @@ if (
   );
 }
 
-const ca = fs.readFileSync(MASTER_DB_CERTIFICATION).toString();
+// const ca = fs.readFileSync(MASTER_DB_CERTIFICATION).toString();
 
 export const master = new Pool({
   user: MASTER_DB_USERNAME,
