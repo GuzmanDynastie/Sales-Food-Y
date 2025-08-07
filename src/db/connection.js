@@ -1,5 +1,6 @@
 import pkg from "pg";
 import fs from "fs";
+import dotenv from 'dotenv';
 
 // process.loadEnvFile();
 dotenv.config();
