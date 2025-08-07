@@ -15,7 +15,8 @@ import routeSupplyEntries from "../routes/supply_entry.route.js";
 import routeSupplyConsumption from "../routes/supply_consumption.route.js";
 import routeRecipes from "../routes/recipe.route.js";
 
-process.loadEnvFile();
+// process.loadEnvFile();
+dotenv.config();
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;

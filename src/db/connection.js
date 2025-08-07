@@ -1,7 +1,8 @@
 import pkg from "pg";
 import fs from "fs";
 
-process.loadEnvFile();
+// process.loadEnvFile();
+dotenv.config();
 const { Pool } = pkg;
 
 const {
