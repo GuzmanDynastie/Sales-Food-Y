@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import { setupSwagger } from "../docs/swagger.doc.js";
@@ -23,6 +24,8 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
 
+app.use(cors());
+
 setupSwagger(app);
 app.use(routeProducts);
 app.use(routeUsers);
@@ -35,7 +38,7 @@ app.use(routeSupplyEntries);
 app.use(routeSupplyConsumption);
 app.use(routeRecipes);
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server starting in http://localhost:${PORT}`);
 });
 
