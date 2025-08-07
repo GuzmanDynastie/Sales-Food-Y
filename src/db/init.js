@@ -53,7 +53,9 @@ export async function initDB() {
             phone TEXT UNIQUE NOT NULL,
             email TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
+            role TEXT NOT NULL,
             status TEXT DEFAULT 'active',
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             cancelled_at TIMESTAMP NULL
         );
     `);

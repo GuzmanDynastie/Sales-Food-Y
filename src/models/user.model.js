@@ -49,11 +49,11 @@ export class UserModel {
    * @returns {Promise<void>} - Promesa que resuelve cuando el usuario esta creado.
    */
   static async createUser(user) {
-    const { name, last_name, phone, email, password } = user;
+    const { name, last_name, phone, email, password, role } = user;
     try {
       const result = await master.query(
-        `INSERT INTO users (name, last_name, phone, email, password) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-        [name, last_name, phone, email, password]
+        `INSERT INTO users (name, last_name, phone, email, password, role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+        [name, last_name, phone, email, password, role]
       );
       return result.rows[0];
     } catch (error) {

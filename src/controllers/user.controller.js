@@ -55,20 +55,21 @@ export class UserController {
    */
   static async createUser(req, res) {
     try {
-      const { name, last_name, phone, email, password } = req.body;
+      const { name, last_name, phone, email, password, role} = req.body;
 
       if (
         !Validators.isNonEmptyString(name) ||
         !Validators.isNonEmptyString(last_name) ||
         !Validators.isNonEmptyString(phone) ||
         !Validators.isNonEmptyString(email) ||
-        !Validators.isNonEmptyString(password)
+        !Validators.isNonEmptyString(password) ||
+        !Validators.isNonEmptyString(role)
       ) {
         return res
           .status(400)
           .json({
             message:
-              "name, last_name, phone, email, and password must be a non-empty string.",
+              "name, last_name, phone, email, password and role must be a non-empty string.",
           });
       }
 
@@ -80,6 +81,7 @@ export class UserController {
         phone,
         email,
         password: hashedPassword,
+        role,
       });
 
       res
@@ -90,7 +92,7 @@ export class UserController {
         return res.status(409).json({ error: "Email is already registered" });
       }
 
-      res.status(500).json({ error: "Failed to create new user" });
+      res.status(500).json({ error: `Failed to create new user -> ${error.message}` });
     }
   }
 
