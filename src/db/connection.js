@@ -10,7 +10,7 @@ const {
   MASTER_DB_DATABASE,
   MASTER_DB_USERNAME,
   MASTER_DB_PASSWORD,
-  MASTER_DB_CERTIFICATION,
+  // MASTER_DB_CERTIFICATION,
 } = process.env;
 
 if (
@@ -18,8 +18,8 @@ if (
   !MASTER_DB_PORT ||
   !MASTER_DB_DATABASE ||
   !MASTER_DB_USERNAME ||
-  !MASTER_DB_PASSWORD ||
-  !MASTER_DB_CERTIFICATION
+  !MASTER_DB_PASSWORD 
+  // !MASTER_DB_CERTIFICATION
 ) {
   throw new Error(
     "Missing required environment variables for database connection"
@@ -35,7 +35,7 @@ export const master = new Pool({
   password: MASTER_DB_PASSWORD,
   port: Number(MASTER_DB_PORT),
   ssl: {
-    rejectUnauthorized: true,
-    ca: ca,
+    rejectUnauthorized: false,
+    // ca: ca,
   },
 });
