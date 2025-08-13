@@ -36,7 +36,7 @@ router.put("/api/users/:id", UserController.updateUser);
  * @desc Eliminar logicamente un user por su ID (soft delete)
  * @access Publico
  */
-router.delete("/api/users:id", UserController.deleteUser);
+router.delete("/api/users/:id", UserController.deleteUser);
 
 /**
  * @route POST /api/login
